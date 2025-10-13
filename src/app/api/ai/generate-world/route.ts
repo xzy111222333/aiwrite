@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import ZAI from 'z-ai-web-dev-sdk'
+import { createDoubaoAI, WRITING_SYSTEM_PROMPT } from '@/lib/doubao'
 
 interface WorldRequest {
   worldName?: string
@@ -30,7 +30,10 @@ export async function POST(request: NextRequest) {
       additional 
     } = body
 
-    const systemPrompt = `你是一位专业的世界观设计师，擅长构建完整、丰富的虚构世界。请根据用户的要求生成一个详细的世界观设定。
+    const systemPrompt = `${WRITING_SYSTEM_PROMPT}
+
+## 世界观构建专项要求
+你是一位专业的世界观设计师，擅长构建完整、丰富的虚构世界。请根据用户的要求生成一个详细的世界观设定，严格遵循上述写作要求。
 
 世界观设定应包含以下方面：
 1. 基础设定：世界名称、基本概念、核心法则
@@ -42,7 +45,7 @@ export async function POST(request: NextRequest) {
 7. 科技水平：技术发展程度、重要发明、科技限制
 8. 特殊设定：魔法系统、超自然力量、特殊种族等
 
-请确保世界观设定逻辑自洽，细节丰富，具有深度和可扩展性。`
+请确保世界观设定逻辑自洽，细节丰富，具有深度和可扩展性。描述要自然生动，强去AI味。`
 
     let userPrompt = '请生成一个完整的世界观设定。'
     
@@ -57,9 +60,9 @@ export async function POST(request: NextRequest) {
     if (religion) userPrompt += `\n宗教信仰：${religion}`
     if (additional) userPrompt += `\n其他设定：${additional}`
 
-    const zai = await ZAI.create()
+    const ai = await createDoubaoAI()
     
-    const completion = await zai.chat.completions.create({
+    const completion = await ai.chat_completions.create({
       messages: [
         {
           role: 'system',

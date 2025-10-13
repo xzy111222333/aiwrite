@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import ZAI from 'z-ai-web-dev-sdk'
+import { createDoubaoAI, WRITING_SYSTEM_PROMPT } from '@/lib/doubao'
 
 interface GenerateRequest {
   prompt: string
@@ -43,14 +43,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 构建 AI 提示词
-    let systemPrompt = `你是一位专业的小说作家，擅长创作各种类型的小说。请根据用户的要求创作一篇精彩的小说。
+    // 构建专业写作提示词
+    let systemPrompt = `${WRITING_SYSTEM_PROMPT}
 
-写作要求：
+## 小说创作专项要求
+你正在创作完整的小说作品，需要：
 1. 内容要原创，不要抄袭现有作品
 2. 情节要引人入胜，人物形象要鲜明
-3. 语言要流畅，符合中文表达习惯
-4. 结构要完整，有开头、发展、高潮和结局`
+3. 结构要完整，有开头、发展、高潮和结局
+4. 严格遵循上述所有写作要求，强去AI味`
 
     if (genre && genreMap[genre]) {
       systemPrompt += `\n5. 小说类型：${genreMap[genre]}`
@@ -71,10 +72,10 @@ export async function POST(request: NextRequest) {
 
     const userPrompt = `创作主题：${prompt}`
 
-    // 调用 ZAI 生成小说
-    const zai = await ZAI.create()
+    // 调用豆包AI生成小说
+    const ai = await createDoubaoAI()
     
-    const completion = await zai.chat.completions.create({
+    const completion = await ai.chat_completions.create({
       messages: [
         {
           role: 'system',
@@ -87,9 +88,7 @@ export async function POST(request: NextRequest) {
       ],
       temperature: 0.8,
       max_tokens: length === 'long' ? 8000 : length === 'short' ? 2000 : 4000,
-      top_p: 0.9,
-      frequency_penalty: 0.3,
-      presence_penalty: 0.3
+      top_p: 0.9
     })
 
     const generatedContent = completion.choices[0]?.message?.content

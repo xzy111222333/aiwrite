@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import ZAI from 'z-ai-web-dev-sdk'
+import { createDoubaoAI, WRITING_SYSTEM_PROMPT } from '@/lib/doubao'
 
 interface OutlineRequest {
   title: string
@@ -22,7 +22,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const systemPrompt = `你是一位专业的小说编辑和剧情设计师，擅长构建引人入胜的故事大纲。请根据用户的要求生成一个详细的小说大纲。
+    const systemPrompt = `${WRITING_SYSTEM_PROMPT}
+
+## 大纲创作专项要求
+你是一位专业的小说编辑和剧情设计师，擅长构建引人入胜的故事大纲。请根据用户的要求生成一个详细的小说大纲，严格遵循上述写作要求。
 
 大纲应包含以下结构：
 1. 故事主题和核心冲突
@@ -32,7 +35,7 @@ export async function POST(request: NextRequest) {
 5. 关键转折点和高潮设计
 6. 结局设计和主题升华
 
-请确保大纲逻辑清晰，情节紧凑，人物成长合理，具有可读性和商业价值。`
+请确保大纲逻辑清晰，情节紧凑，人物成长合理，具有可读性和商业价值。描述要自然生动，强去AI味。`
 
     let userPrompt = `请为小说《${title}》生成详细大纲。`
     
@@ -42,9 +45,9 @@ export async function POST(request: NextRequest) {
     userPrompt += `\n章节数量：${chapterCount}章`
     if (style) userPrompt += `\n写作风格：${style}`
 
-    const zai = await ZAI.create()
+    const ai = await createDoubaoAI()
     
-    const completion = await zai.chat.completions.create({
+    const completion = await ai.chat_completions.create({
       messages: [
         {
           role: 'system',

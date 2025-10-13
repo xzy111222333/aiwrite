@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import ZAI from 'z-ai-web-dev-sdk'
+import { createDoubaoAI, WRITING_SYSTEM_PROMPT } from '@/lib/doubao'
 
 interface CharacterRequest {
   name?: string
@@ -14,7 +14,10 @@ export async function POST(request: NextRequest) {
     const body: CharacterRequest = await request.json()
     const { name, role, personality, background, storyContext } = body
 
-    const systemPrompt = `你是一位专业的小说角色设计师，擅长创造立体、生动的小说人物。请根据用户的要求生成一个详细的角色设定。
+    const systemPrompt = `${WRITING_SYSTEM_PROMPT}
+
+## 角色设定专项要求
+你是一位专业的小说角色设计师，擅长创造立体、生动的小说人物。请根据用户的要求生成一个详细的角色设定，严格遵循上述写作要求。
 
 角色设定应包含以下方面：
 1. 基本信息：姓名、年龄、性别、外貌特征
@@ -25,7 +28,7 @@ export async function POST(request: NextRequest) {
 6. 内心世界：价值观、目标、恐惧、渴望
 7. 角色弧光：在故事中的成长变化
 
-请确保角色设定详细、合理，具有文学性和可塑性。`
+请确保角色设定详细、合理，具有文学性和可塑性，描写自然生动，强去AI味。`
 
     let userPrompt = '请生成一个小说角色设定。'
     
@@ -35,9 +38,9 @@ export async function POST(request: NextRequest) {
     if (background) userPrompt += `\n背景要求：${background}`
     if (storyContext) userPrompt += `\n故事背景：${storyContext}`
 
-    const zai = await ZAI.create()
+    const ai = await createDoubaoAI()
     
-    const completion = await zai.chat.completions.create({
+    const completion = await ai.chat_completions.create({
       messages: [
         {
           role: 'system',

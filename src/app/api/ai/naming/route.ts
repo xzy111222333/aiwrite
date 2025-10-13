@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import ZAI from 'z-ai-web-dev-sdk'
+import { createDoubaoAI, WRITING_SYSTEM_PROMPT } from '@/lib/doubao'
 
 const TYPE_HINTS: Record<string, string> = {
   character: '角色名字，需要考虑性格、身份与时代背景。',
@@ -33,17 +33,29 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const zai = await ZAI.create()
-    const completion = await zai.chat.completions.create({
+    const ai = await createDoubaoAI()
+    const completion = await ai.chat_completions.create({
       messages: [
         {
           role: 'system',
-          content:
-            '你是一名专业的中文创意命名顾问，请根据用户需求提供 5 个命名建议，并返回 JSON：{"suggestions": [{"name": "...", "meaning": "..."}]}。Name 字段为名称，meaning 解释命名思路。禁止输出除 JSON 外内容。',
+          content: `${WRITING_SYSTEM_PROMPT}
+
+## 起名专项要求
+你是一名专业的中文创意命名顾问，请根据用户需求提供 5 个命名建议，严格遵循上述写作要求。名称要：
+1. 符合中文语言习惯
+2. 避免AI味，自然贴切
+3. 有文化内涵和意境
+4. 读起来朗朗上口
+
+返回格式：{"suggestions": [{"name": "...", "meaning": "..."}]}
+- name：名称
+- meaning：命名思路解释（自然表达，无AI味）
+
+禁止输出除 JSON 外内容。`,
         },
         {
           role: 'user',
-          content: `命名对象：${type}\n${TYPE_HINTS[type] ?? ''}\n性别倾向：${gender}\n风格偏好：${STYLE_HINTS[style] ?? ''}\n关键词：${keywords}\n背景描述：${background}\n请直接返回 JSON。`,
+          content: `命名对象：${type}\n${TYPE_HINTS[type] ?? ''}\n性别倾向：${gender}\n风格偏好：${STYLE_HINTS[style] ?? ''}\n关键词：${keywords}\n背景描述：${background}\n请按照系统要求命名并直接返回 JSON。`,
         },
       ],
       temperature: 0.7,
