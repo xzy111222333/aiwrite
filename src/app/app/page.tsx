@@ -746,10 +746,10 @@ export default function AppPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground">
-      <aside className="hidden h-screen w-20 flex-col border-r border-border/60 bg-card/60 p-4 backdrop-blur lg:flex">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-          <Sparkles className="h-5 w-5" />
+    <div className="flex min-h-screen bg-gradient-to-br from-white via-slate-50/30 to-teal-50/10 text-foreground">
+      <aside className="hidden h-screen w-20 flex-col border-r border-border/40 bg-white/80 backdrop-blur-xl p-4 lg:flex shadow-soft">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-teal-600 shadow-card">
+          <Sparkles className="h-5 w-5 text-white" />
         </div>
         <nav className="mt-10 flex flex-1 flex-col gap-3">
           {NAVIGATION.map((item) => {
@@ -765,14 +765,14 @@ export default function AppPage() {
                   }
                 }}
                 className={cn(
-                  'group flex flex-col items-center gap-1 rounded-2xl px-2 py-3 text-xs transition',
+                  'group flex flex-col items-center gap-1.5 rounded-2xl px-2 py-3 text-xs transition-all duration-200',
                   active
-                    ? 'bg-primary text-primary-foreground shadow-lg'
-                    : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
+                    ? 'bg-gradient-to-br from-primary to-teal-600 text-white shadow-card'
+                    : 'text-muted-foreground hover:bg-primary/5 hover:text-primary'
                 )}
               >
                 <item.icon className="h-5 w-5" />
-                <span className="font-medium">{item.label}</span>
+                <span className="font-semibold">{item.label}</span>
               </button>
             )
           })}
@@ -796,7 +796,13 @@ export default function AppPage() {
             novels={novels}
             selectedNovelId={selectedNovelId}
             onSelectNovel={(novelId) => setSelectedNovelId(novelId)}
-            novelDetail={fullNovel}
+            novelDetail={fullNovel ? {
+              ...fullNovel,
+              chapters: fullNovel.chapters.map(ch => ({
+                ...ch,
+                updatedAt: ch.updatedAt ?? new Date().toISOString()
+              }))
+            } : undefined}
             onOpenTool={(toolId) => {
               handleAssistantClick(
                 TOOL_DEFINITIONS.find((tool) => tool.id === toolId as AssistantTool) ??
@@ -835,18 +841,18 @@ export default function AppPage() {
               }
             />
             <div className="flex flex-1 flex-col overflow-hidden">
-              <header className="border-b border-border/60 bg-card/60 px-6 py-6 backdrop-blur">
+              <header className="border-b border-border/40 bg-white/80 backdrop-blur-xl px-6 py-6 shadow-soft">
                 <div className="flex flex-col gap-6">
                   <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
                     <div className="space-y-3">
-                      <Badge variant="secondary" className="rounded-full px-4 py-1 text-xs tracking-[0.24em] uppercase">
-                        写作工作台
-                      </Badge>
-                      <h1 className="text-3xl font-semibold tracking-tight">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
+                        <span className="text-xs font-bold uppercase tracking-wider text-primary">写作工作台</span>
+                      </div>
+                      <h1 className="text-3xl font-black tracking-tight">
                         {fullNovel ? fullNovel.title : '开始创作你的故事'}
                       </h1>
-                      <p className="max-w-2xl text-sm text-muted-foreground">
-                        点击上方工具条可唤起不同的 AI 助手。默认保留一整块清爽的创作区域，专注于当前章节的内容。
+                      <p className="max-w-2xl text-sm text-muted-foreground leading-relaxed">
+                        点击下方工具条可唤起不同的 AI 助手。默认保留一整块清爽的创作区域，专注于当前章节的内容。
                       </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-3">
@@ -854,7 +860,7 @@ export default function AppPage() {
                         variant="outline"
                         onClick={() => exportNovel('text')}
                         disabled={!fullNovel || exporting}
-                        className="rounded-xl border-2"
+                        className="rounded-xl border-2 hover-glow font-semibold"
                       >
                         {exporting ? (
                           <>
@@ -872,7 +878,7 @@ export default function AppPage() {
                         variant="outline"
                         onClick={() => exportNovel('markdown')}
                         disabled={!fullNovel || exporting}
-                        className="rounded-xl border-2"
+                        className="rounded-xl border-2 hover-glow font-semibold"
                       >
                         <Copy className="mr-2 h-4 w-4" />
                         导出 Markdown
@@ -881,14 +887,14 @@ export default function AppPage() {
                         variant="outline"
                         onClick={() => setChapterDialogOpen(true)}
                         disabled={!selectedNovelId}
-                        className="rounded-xl border-2"
+                        className="rounded-xl border-2 hover-glow font-semibold"
                       >
                         <Plus className="mr-2 h-4 w-4" />
                         新建章节
                       </Button>
                       <Button
                         onClick={() => setNovelDialogOpen(true)}
-                        className="rounded-xl bg-primary px-6 text-primary-foreground hover:bg-primary/90"
+                        className="btn-primary rounded-xl px-6 text-primary-foreground font-bold"
                       >
                         <Plus className="mr-2 h-4 w-4" />
                         新建作品
@@ -899,13 +905,13 @@ export default function AppPage() {
                   <div className="flex flex-wrap gap-3">
                     {workspaceBadges ? (
                       workspaceBadges.map((item) => (
-                        <Badge
+                        <div
                           key={item.label}
-                          variant="outline"
-                          className="rounded-full border-2 px-4 py-1 text-xs"
+                          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/10"
                         >
-                          {item.label} · {item.value}
-                        </Badge>
+                          <span className="text-xs font-semibold text-muted-foreground">{item.label}</span>
+                          <span className="text-xs font-bold text-primary">{item.value}</span>
+                        </div>
                       ))
                     ) : (
                       <p className="text-sm text-muted-foreground">
@@ -923,10 +929,10 @@ export default function AppPage() {
                           type="button"
                           onClick={() => handleAssistantClick(tool)}
                           className={cn(
-                            'flex items-center gap-2 rounded-full px-4 py-2 text-sm transition',
+                            'flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition-all duration-200',
                             active
-                              ? 'bg-primary text-primary-foreground shadow-md'
-                              : 'bg-card/80 text-muted-foreground hover:bg-primary/10 hover:text-primary'
+                              ? 'bg-gradient-to-br from-primary to-teal-600 text-white shadow-card'
+                              : 'bg-white/80 border border-border/60 text-muted-foreground hover:bg-primary/5 hover:text-primary hover:border-primary/20 shadow-soft'
                           )}
                         >
                           <tool.icon className="h-4 w-4" />

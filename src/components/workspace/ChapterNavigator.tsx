@@ -80,24 +80,24 @@ export function ChapterNavigator({
   const statusLabel = novelStats ? statusLabelMap[novelStats.status] ?? novelStats.status : undefined
 
   return (
-    <aside className="hidden xl:flex h-full w-80 flex-col border-r border-border/60 bg-card/40 backdrop-blur">
-      <div className="space-y-4 border-b border-border/60 p-6">
+    <aside className="hidden xl:flex h-full w-80 flex-col border-r border-border/40 bg-white/80 backdrop-blur-xl shadow-soft">
+      <div className="space-y-4 border-b border-border/40 p-6">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.12em]">作品选择</p>
-            <h2 className="mt-2 flex items-center gap-2 text-lg font-semibold text-foreground">
+            <p className="text-xs font-bold text-primary uppercase tracking-wider">作品选择</p>
+            <h2 className="mt-2 flex items-center gap-2 text-lg font-bold text-foreground">
               <BookOpen className="h-5 w-5 text-primary" />
               {selectedNovel?.title ?? '暂未选择作品'}
             </h2>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={onOpenLibrary} className="rounded-xl" aria-label="打开作品库">
+            <Button variant="ghost" size="icon" onClick={onOpenLibrary} className="rounded-xl hover:bg-primary/5 hover:text-primary" aria-label="打开作品库">
               <FolderOpen className="h-4 w-4" />
             </Button>
             {selectedNovelId && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-xl">
+                  <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/5 hover:text-primary">
                     <EllipsisVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -120,7 +120,7 @@ export function ChapterNavigator({
           value={selectedNovelId}
           onValueChange={onSelectNovel}
         >
-          <SelectTrigger className="h-11 rounded-xl border-2">
+          <SelectTrigger className="h-11 rounded-xl border-2 hover-glow font-semibold">
             <SelectValue placeholder="选择或创建作品" />
           </SelectTrigger>
           <SelectContent>
@@ -136,11 +136,11 @@ export function ChapterNavigator({
         </Select>
 
         <div className="flex items-center gap-2">
-          <Button onClick={onCreateNovel} className="flex-1 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90">
+          <Button onClick={onCreateNovel} className="flex-1 rounded-xl btn-primary text-primary-foreground font-bold">
             <Plus className="mr-2 h-4 w-4" />
             新建作品
           </Button>
-          <Button variant="outline" onClick={onOpenReorder} disabled={chapters.length === 0} className="rounded-xl border-2">
+          <Button variant="outline" onClick={onOpenReorder} disabled={chapters.length === 0} className="rounded-xl border-2 hover-glow font-semibold">
             <GripVertical className="mr-2 h-4 w-4" />
             调整顺序
           </Button>
@@ -148,21 +148,21 @@ export function ChapterNavigator({
 
         {novelStats && (
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-xl border border-border bg-secondary/40 p-3">
-              <p className="text-xs text-muted-foreground">作品状态</p>
-              <p className="mt-2 text-sm font-semibold text-foreground">{statusLabel}</p>
+            <div className="rounded-xl bg-gradient-to-br from-primary/5 to-teal-50/50 border border-primary/10 p-3 shadow-soft">
+              <p className="text-xs font-semibold text-muted-foreground">作品状态</p>
+              <p className="mt-2 text-sm font-bold text-primary">{statusLabel}</p>
             </div>
-            <div className="rounded-xl border border-border bg-secondary/40 p-3">
-              <p className="text-xs text-muted-foreground">总字数</p>
-              <p className="mt-2 text-sm font-semibold text-foreground">{novelStats.wordCount.toLocaleString()} 字</p>
+            <div className="rounded-xl bg-gradient-to-br from-primary/5 to-teal-50/50 border border-primary/10 p-3 shadow-soft">
+              <p className="text-xs font-semibold text-muted-foreground">总字数</p>
+              <p className="mt-2 text-sm font-bold text-primary">{novelStats.wordCount.toLocaleString()} 字</p>
             </div>
-            <div className="rounded-xl border border-border bg-secondary/40 p-3">
-              <p className="text-xs text-muted-foreground">章节数</p>
-              <p className="mt-2 text-sm font-semibold text-foreground">{novelStats.chapterCount} 章</p>
+            <div className="rounded-xl bg-gradient-to-br from-primary/5 to-teal-50/50 border border-primary/10 p-3 shadow-soft">
+              <p className="text-xs font-semibold text-muted-foreground">章节数</p>
+              <p className="mt-2 text-sm font-bold text-primary">{novelStats.chapterCount} 章</p>
             </div>
-            <div className="rounded-xl border border-border bg-secondary/40 p-3">
-              <p className="text-xs text-muted-foreground">标签</p>
-              <p className="mt-2 text-xs text-muted-foreground">
+            <div className="rounded-xl bg-gradient-to-br from-primary/5 to-teal-50/50 border border-primary/10 p-3 shadow-soft">
+              <p className="text-xs font-semibold text-muted-foreground">标签</p>
+              <p className="mt-2 text-xs text-muted-foreground font-medium">
                 {novelStats.tags?.length ? novelStats.tags.join(' / ') : '暂未设置'}
               </p>
             </div>
@@ -172,21 +172,23 @@ export function ChapterNavigator({
 
       <div className="flex flex-1 flex-col">
         <div className="flex items-center justify-between px-6 py-3">
-          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.32em]">章节</span>
-          <Button variant="ghost" size="sm" onClick={onCreateChapter} className="rounded-lg px-3">
+          <span className="text-xs font-bold text-primary uppercase tracking-wider">章节</span>
+          <Button variant="ghost" size="sm" onClick={onCreateChapter} className="rounded-xl px-3 hover:bg-primary/5 hover:text-primary font-semibold">
             <Plus className="mr-2 h-4 w-4" />
             新建
           </Button>
         </div>
-        <Separator />
+        <Separator className="bg-border/40" />
         <ScrollArea className="flex-1">
           <div className="space-y-2 px-4 py-4">
             {chapters.map((chapter, index) => (
               <div
                 key={chapter.id}
                 className={cn(
-                  'flex items-center gap-2 rounded-xl border border-transparent bg-card/70 px-3 py-3 transition hover:border-border',
-                  activeChapterId === chapter.id && 'border-primary bg-primary/10 shadow-sm'
+                  'group flex items-center gap-2 rounded-2xl border bg-white/80 px-3 py-3 transition-all duration-200 shadow-soft',
+                  activeChapterId === chapter.id 
+                    ? 'border-primary/40 bg-gradient-to-br from-primary/10 to-teal-50/50 shadow-card' 
+                    : 'border-border/40 hover:border-primary/20 hover:bg-primary/5'
                 )}
               >
                 <button
@@ -194,18 +196,21 @@ export function ChapterNavigator({
                   onClick={() => onSelectChapter(chapter.id)}
                   className="flex-1 text-left"
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold text-foreground">
-                      第 {index + 1} 章 · {chapter.title}
+                  <div className="flex items-center gap-2">
+                    <span className={cn(
+                      "text-sm font-bold",
+                      activeChapterId === chapter.id ? "text-primary" : "text-foreground"
+                    )}>
+                      第 {index + 1} 章
                     </span>
-                    <Badge variant="outline" className="rounded-full border-2 px-2 text-[10px]">
-                      {statusLabelMap[chapter.status] ?? chapter.status}
-                    </Badge>
+                    <span className="text-sm font-semibold text-foreground truncate">
+                      {chapter.title}
+                    </span>
                   </div>
-                  <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-                    <span>{chapter.wordCount.toLocaleString()} 字</span>
+                  <div className="mt-2 flex items-center justify-between text-xs">
+                    <span className="font-semibold text-muted-foreground">{chapter.wordCount.toLocaleString()} 字</span>
                     {chapter.updatedAt && (
-                      <span className="inline-flex items-center gap-1">
+                      <span className="inline-flex items-center gap-1 text-muted-foreground">
                         <ChevronRight className="h-3 w-3" />
                         {new Date(chapter.updatedAt).toLocaleDateString()}
                       </span>
@@ -216,7 +221,7 @@ export function ChapterNavigator({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="rounded-xl text-muted-foreground hover:text-destructive"
+                    className="rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/5"
                     onClick={() => onDeleteChapter(chapter.id)}
                     aria-label="删除章节"
                   >
@@ -226,7 +231,7 @@ export function ChapterNavigator({
               </div>
             ))}
             {chapters.length === 0 && (
-              <div className="rounded-xl border-2 border-dashed border-border/60 bg-background/60 px-4 py-12 text-center text-xs text-muted-foreground">
+              <div className="rounded-2xl border-2 border-dashed border-primary/20 bg-primary/5 px-4 py-12 text-center text-xs text-muted-foreground font-medium">
                 还没有章节，点击右上角「新建」开始创作你的第一个章节。
               </div>
             )}
@@ -234,10 +239,10 @@ export function ChapterNavigator({
         </ScrollArea>
       </div>
 
-      <div className="border-t border-border/60 p-6">
+      <div className="border-t border-border/40 p-6">
         <Button
           onClick={onCreateChapter}
-          className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/90"
+          className="w-full rounded-xl btn-primary text-primary-foreground font-bold"
         >
           <Plus className="mr-2 h-4 w-4" />
           添加章节

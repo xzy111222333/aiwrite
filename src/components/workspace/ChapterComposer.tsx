@@ -10,8 +10,9 @@ import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { RefreshCw, Save, Sparkles } from 'lucide-react'
+import { PenTool, RefreshCw, Save, Sparkles } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import { cn } from '@/lib/utils'
 
 interface ChapterComposerProps {
   novelId?: string
@@ -167,43 +168,50 @@ export function ChapterComposer({ novelId, chapterId, onSaved }: ChapterComposer
   }
 
   return (
-    <Card className="border border-border bg-card rounded-2xl">
-      <CardHeader className="pb-4">
+    <Card className="border border-border/40 bg-white/90 backdrop-blur-sm rounded-3xl shadow-card mt-6">
+      <CardHeader className="pb-4 px-8 pt-8">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-xl font-bold tracking-tight">章节编辑器</CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">实时自动保存前请手动点击保存按钮</p>
+            <CardTitle className="text-xl font-black tracking-tight flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-teal-50 flex items-center justify-center">
+                <PenTool className="w-4 h-4 text-primary" />
+              </div>
+              章节编辑器
+            </CardTitle>
+            <p className="text-sm text-muted-foreground mt-2 font-medium">编辑完成后请点击保存按钮</p>
           </div>
-          <Badge variant="outline" className="text-sm px-4 py-1.5 rounded-full border-2">{wordCount} 字</Badge>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/10">
+            <span className="text-xs font-bold text-primary">{wordCount} 字</span>
+          </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-6 pt-2">
+      <CardContent className="space-y-6 px-8 pb-8">
         <div className="grid gap-5">
           <div className="grid gap-3">
-            <Label className="text-sm font-semibold text-foreground">章节标题</Label>
+            <Label className="text-sm font-bold text-foreground">章节标题</Label>
             <Input
               value={title}
               onChange={(event) => setTitle(event.target.value)}
               placeholder="例如：第一章 重返星港"
-              className="rounded-xl border-2"
+              className="rounded-xl border-2 hover-glow font-semibold"
             />
           </div>
           <div className="grid gap-3">
-            <Label className="text-sm font-semibold text-foreground">章节摘要</Label>
+            <Label className="text-sm font-bold text-foreground">章节摘要</Label>
             <Textarea
               value={summary}
               onChange={(event) => setSummary(event.target.value)}
               placeholder="简要描述本章关键剧情"
               rows={3}
-              className="rounded-xl border-2"
+              className="rounded-xl border-2 hover-glow font-medium"
             />
           </div>
         </div>
 
         <Tabs defaultValue="editor" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-secondary/50 rounded-xl p-1">
-            <TabsTrigger value="editor" className="rounded-lg font-medium">正文内容</TabsTrigger>
-            <TabsTrigger value="assistant" className="rounded-lg font-medium">AI 助手</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 bg-primary/5 border border-primary/10 rounded-xl p-1">
+            <TabsTrigger value="editor" className="rounded-lg font-bold data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-soft">正文内容</TabsTrigger>
+            <TabsTrigger value="assistant" className="rounded-lg font-bold data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-soft">AI 助手</TabsTrigger>
           </TabsList>
 
           <TabsContent value="editor" className="mt-6 space-y-5">
@@ -212,14 +220,14 @@ export function ChapterComposer({ novelId, chapterId, onSaved }: ChapterComposer
               onChange={(event) => setContent(event.target.value)}
               placeholder="开始书写章节内容..."
               minRows={20}
-              className="min-h-[480px] resize-y rounded-xl border-2 font-mono text-sm leading-relaxed"
+              className="min-h-[480px] resize-y rounded-2xl border-2 hover-glow font-mono text-sm leading-relaxed shadow-soft"
             />
             <div className="flex flex-wrap items-center gap-4">
-              <Button onClick={handleSave} className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl font-medium">
+              <Button onClick={handleSave} className="btn-primary rounded-xl font-bold">
                 <Save className="mr-2 h-4 w-4" /> 保存章节
               </Button>
-              <Separator orientation="vertical" className="h-6" />
-              <Label className="text-sm font-semibold text-foreground">状态</Label>
+              <Separator orientation="vertical" className="h-6 bg-border/40" />
+              <Label className="text-sm font-bold text-foreground">状态</Label>
               <div className="flex gap-2 flex-wrap">
                 {[
                   { value: 'draft', label: '草稿' },
@@ -232,7 +240,12 @@ export function ChapterComposer({ novelId, chapterId, onSaved }: ChapterComposer
                     variant={status === item.value ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setStatus(item.value)}
-                    className="rounded-full border-2 font-medium"
+                    className={cn(
+                      "rounded-full border-2 font-semibold transition-all duration-200",
+                      status === item.value 
+                        ? "bg-gradient-to-br from-primary to-teal-600 text-white shadow-card" 
+                        : "hover-glow"
+                    )}
                   >
                     {item.label}
                   </Button>
@@ -242,40 +255,40 @@ export function ChapterComposer({ novelId, chapterId, onSaved }: ChapterComposer
           </TabsContent>
 
           <TabsContent value="assistant" className="mt-6 space-y-5">
-            <div className="space-y-4 rounded-xl border border-border bg-secondary/20 p-5">
+            <div className="space-y-4 rounded-2xl bg-gradient-to-br from-primary/5 to-teal-50/50 border border-primary/10 p-6 shadow-soft">
               <div className="space-y-3">
-                <Label className="text-sm font-semibold text-foreground">上下文信息</Label>
+                <Label className="text-sm font-bold text-foreground">上下文信息</Label>
                 <Textarea
                   value={aiContext}
                   onChange={(event) => setAiContext(event.target.value)}
                   placeholder="补充上下文、人物变化等"
                   rows={4}
-                  className="rounded-xl border-2"
+                  className="rounded-xl border-2 hover-glow font-medium bg-white/80"
                 />
               </div>
               <div className="space-y-3">
-                <Label className="text-sm font-semibold text-foreground">剧情方向</Label>
+                <Label className="text-sm font-bold text-foreground">剧情方向</Label>
                 <Textarea
                   value={aiDirection}
                   onChange={(event) => setAiDirection(event.target.value)}
                   placeholder="告诉 AI 本段需要出现的转折或重点"
                   rows={4}
-                  className="rounded-xl border-2"
+                  className="rounded-xl border-2 hover-glow font-medium bg-white/80"
                 />
               </div>
               <div className="flex items-center gap-3">
-                <Label className="text-sm font-semibold text-foreground">续写长度</Label>
+                <Label className="text-sm font-bold text-foreground">续写长度</Label>
                 <Input
                   value={aiLength}
                   onChange={(event) => setAiLength(event.target.value)}
-                  className="w-28 rounded-lg border-2"
+                  className="w-28 rounded-xl border-2 hover-glow font-semibold bg-white/80"
                 />
               </div>
             </div>
 
             <div className="flex gap-3">
               <Button
-                className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl font-medium"
+                className="flex-1 btn-primary rounded-xl font-bold"
                 onClick={handleGenerateContinuation}
                 disabled={isGenerating}
               >
@@ -291,14 +304,14 @@ export function ChapterComposer({ novelId, chapterId, onSaved }: ChapterComposer
                   </>
                 )}
               </Button>
-              <Button variant="outline" disabled={!aiSuggestion} onClick={appendSuggestion} className="rounded-xl border-2 font-medium">
+              <Button variant="outline" disabled={!aiSuggestion} onClick={appendSuggestion} className="rounded-xl border-2 hover-glow font-bold">
                 插入续写内容
               </Button>
             </div>
 
             {aiSuggestion && (
-              <ScrollArea className="max-h-[280px] rounded-xl border-2 border-border bg-card p-5 text-sm leading-relaxed">
-                <pre className="whitespace-pre-wrap font-sans text-foreground">{aiSuggestion}</pre>
+              <ScrollArea className="max-h-[280px] rounded-2xl border-2 border-primary/10 bg-white/80 p-5 text-sm leading-relaxed shadow-soft">
+                <pre className="whitespace-pre-wrap font-sans text-foreground font-medium">{aiSuggestion}</pre>
               </ScrollArea>
             )}
           </TabsContent>

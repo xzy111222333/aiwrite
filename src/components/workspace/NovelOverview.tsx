@@ -61,49 +61,49 @@ export function NovelOverview({ novel }: NovelOverviewProps) {
 
   if (!novel) {
     return (
-      <Card className="border border-border bg-card p-16 text-center rounded-2xl">
-        <p className="text-base text-muted-foreground">请选择一个作品以查看全局概览。</p>
+      <Card className="border-2 border-dashed border-primary/20 bg-primary/5 p-16 text-center rounded-3xl shadow-soft">
+        <p className="text-base text-muted-foreground font-medium">请选择一个作品以查看全局概览。</p>
       </Card>
     )
   }
 
   return (
-    <Card className="border border-border bg-card rounded-2xl">
-      <CardHeader className="pb-4">
+    <Card className="border border-border/40 bg-white/90 backdrop-blur-sm rounded-3xl shadow-card">
+      <CardHeader className="pb-6 px-8 pt-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <CardTitle className="text-2xl font-bold text-foreground tracking-tight">{novel.title}</CardTitle>
+            <CardTitle className="text-2xl lg:text-3xl font-black text-foreground tracking-tight">{novel.title}</CardTitle>
             {novel.description && (
-              <p className="mt-3 max-w-2xl text-sm text-muted-foreground leading-relaxed">
+              <p className="mt-3 max-w-2xl text-sm text-muted-foreground leading-relaxed font-medium">
                 {novel.description}
               </p>
             )}
           </div>
           <div className="flex flex-wrap gap-2">
             {(novel.tags || []).map((tag) => (
-              <Badge key={tag} variant="secondary" className="text-xs px-3 py-1 rounded-md">
+              <div key={tag} className="inline-flex items-center px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary">
                 {tag}
-              </Badge>
+              </div>
             ))}
           </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-8">
+      <CardContent className="space-y-8 px-8 pb-8">
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {stats.map((stat) => (
-            <div key={stat.label} className="rounded-xl border border-border bg-secondary/20 p-5">
-              <p className="text-sm font-semibold text-foreground">{stat.label}</p>
-              <p className="mt-3 text-2xl font-bold text-foreground">{stat.value}</p>
+            <div key={stat.label} className="rounded-2xl bg-gradient-to-br from-primary/5 to-teal-50/50 border border-primary/10 p-5 shadow-soft">
+              <p className="text-sm font-bold text-muted-foreground">{stat.label}</p>
+              <p className="mt-3 text-2xl font-black text-primary">{stat.value}</p>
             </div>
           ))}
         </div>
 
         <Tabs defaultValue="chapters" className="w-full">
-          <TabsList className="bg-secondary/50 rounded-xl p-1">
-            <TabsTrigger value="chapters" className="rounded-lg font-medium">章节概览</TabsTrigger>
-            <TabsTrigger value="characters" className="rounded-lg font-medium">角色档案</TabsTrigger>
-            <TabsTrigger value="outlines" className="rounded-lg font-medium">故事大纲</TabsTrigger>
-            <TabsTrigger value="world" className="rounded-lg font-medium">世界观</TabsTrigger>
+          <TabsList className="bg-primary/5 border border-primary/10 rounded-xl p-1">
+            <TabsTrigger value="chapters" className="rounded-lg font-bold data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-soft">章节概览</TabsTrigger>
+            <TabsTrigger value="characters" className="rounded-lg font-bold data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-soft">角色档案</TabsTrigger>
+            <TabsTrigger value="outlines" className="rounded-lg font-bold data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-soft">故事大纲</TabsTrigger>
+            <TabsTrigger value="world" className="rounded-lg font-bold data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-soft">世界观</TabsTrigger>
           </TabsList>
 
           <TabsContent value="chapters" className="mt-6">

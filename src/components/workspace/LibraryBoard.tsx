@@ -69,21 +69,23 @@ export function LibraryBoard({ novels, onSelect, onCreate, onRename, onDelete }:
   }, [novels, search, statusFilter])
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="border-b border-border/60 bg-card/60 p-8 backdrop-blur">
+    <div className="flex h-full flex-col bg-gradient-to-br from-white via-slate-50/30 to-teal-50/10">
+      <header className="border-b border-border/40 bg-white/80 backdrop-blur-xl p-8 shadow-soft">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">作品库</p>
-            <h1 className="text-3xl font-semibold tracking-tight text-foreground">管理你的所有作品</h1>
-            <p className="text-sm text-muted-foreground">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
+              <span className="text-xs font-bold uppercase tracking-wider text-primary">作品库</span>
+            </div>
+            <h1 className="text-3xl lg:text-4xl font-black tracking-tight text-foreground">管理你的所有作品</h1>
+            <p className="text-sm text-muted-foreground leading-relaxed">
               支持按状态筛选、快速进入写作模式，全面掌控创作进度。
             </p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" size="icon" onClick={() => setLayout(layout === 'grid' ? 'list' : 'grid')} className="rounded-xl border-2">
+            <Button variant="outline" size="icon" onClick={() => setLayout(layout === 'grid' ? 'list' : 'grid')} className="rounded-xl border-2 hover-glow">
               {layout === 'grid' ? <LayoutList className="h-4 w-4" /> : <Grid2X2 className="h-4 w-4" />}
             </Button>
-            <Button onClick={onCreate} className="rounded-xl bg-primary px-6 text-primary-foreground hover:bg-primary/90">
+            <Button onClick={onCreate} className="btn-primary rounded-xl px-6 text-primary-foreground font-bold">
               <Plus className="mr-2 h-4 w-4" />
               新建作品
             </Button>
@@ -91,18 +93,18 @@ export function LibraryBoard({ novels, onSelect, onCreate, onRename, onDelete }:
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-[320px_200px]">
           <div className="space-y-2">
-            <Label className="text-xs uppercase tracking-[0.24em] text-muted-foreground">搜索作品</Label>
+            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">搜索作品</Label>
             <Input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="输入作品标题、标签或描写关键词"
-              className="h-11 rounded-xl border-2"
+              className="h-11 rounded-xl border-2 hover-glow font-medium"
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-xs uppercase tracking-[0.24em] text-muted-foreground">状态筛选</Label>
+            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">状态筛选</Label>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="h-11 rounded-xl border-2">
+              <SelectTrigger className="h-11 rounded-xl border-2 hover-glow font-semibold">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -126,21 +128,23 @@ export function LibraryBoard({ novels, onSelect, onCreate, onRename, onDelete }:
             <Card
               key={novel.id}
               className={cn(
-                'group relative overflow-hidden rounded-3xl border border-border/60 bg-card/80 shadow-sm transition hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg',
+                'group relative overflow-hidden rounded-3xl border border-border/40 bg-white/90 backdrop-blur-sm shadow-card hover-lift transition-all duration-300',
                 layout === 'list' && 'flex flex-col md:flex-row'
               )}
             >
-              <CardHeader className="space-y-3 p-6 pb-0">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-primary/5 to-transparent rounded-full -mr-20 -mt-20" />
+              
+              <CardHeader className="space-y-3 p-6 pb-0 relative">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <CardTitle className="text-xl font-semibold text-foreground">{novel.title}</CardTitle>
-                    <p className="mt-2 text-xs text-muted-foreground">
+                    <CardTitle className="text-xl font-bold text-foreground">{novel.title}</CardTitle>
+                    <p className="mt-2 text-xs font-semibold text-muted-foreground">
                       最近更新：{new Date(novel.updatedAt).toLocaleString()}
                     </p>
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="rounded-2xl">
+                      <Button variant="ghost" size="icon" className="rounded-2xl hover:bg-primary/5 hover:text-primary">
                         <EllipsisVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
@@ -153,58 +157,58 @@ export function LibraryBoard({ novels, onSelect, onCreate, onRename, onDelete }:
                   </DropdownMenu>
                 </div>
                 {novel.description && (
-                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">{novel.description}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 font-medium">{novel.description}</p>
                 )}
               </CardHeader>
-              <CardContent className="flex flex-1 flex-col gap-5 p-6 pt-5">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-xl border border-border bg-secondary/40 p-3">
-                    <p className="text-xs text-muted-foreground">状态</p>
-                    <p className="mt-2 text-sm font-semibold text-foreground">
+              <CardContent className="flex flex-1 flex-col gap-5 p-6 pt-5 relative">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-2xl bg-gradient-to-br from-primary/5 to-teal-50/50 border border-primary/10 p-3 shadow-soft">
+                    <p className="text-xs font-semibold text-muted-foreground">状态</p>
+                    <p className="mt-2 text-sm font-bold text-primary">
                       {statusLabelMap[novel.status] ?? novel.status}
                     </p>
                   </div>
-                  <div className="rounded-xl border border-border bg-secondary/40 p-3">
-                    <p className="text-xs text-muted-foreground">章节数</p>
-                    <p className="mt-2 text-sm font-semibold text-foreground">{novel.chapterCount} 章</p>
+                  <div className="rounded-2xl bg-gradient-to-br from-primary/5 to-teal-50/50 border border-primary/10 p-3 shadow-soft">
+                    <p className="text-xs font-semibold text-muted-foreground">章节数</p>
+                    <p className="mt-2 text-sm font-bold text-primary">{novel.chapterCount} 章</p>
                   </div>
-                  <div className="rounded-xl border border-border bg-secondary/40 p-3">
-                    <p className="text-xs text-muted-foreground">总字数</p>
-                    <p className="mt-2 text-sm font-semibold text-foreground">
+                  <div className="rounded-2xl bg-gradient-to-br from-primary/5 to-teal-50/50 border border-primary/10 p-3 shadow-soft">
+                    <p className="text-xs font-semibold text-muted-foreground">总字数</p>
+                    <p className="mt-2 text-sm font-bold text-primary">
                       {novel.wordCount.toLocaleString()} 字
                     </p>
                   </div>
-                  <div className="rounded-xl border border-border bg-secondary/40 p-3">
-                    <p className="text-xs text-muted-foreground">类型</p>
-                    <p className="mt-2 text-sm font-semibold text-foreground">{novel.genre ?? '暂未设置'}</p>
+                  <div className="rounded-2xl bg-gradient-to-br from-primary/5 to-teal-50/50 border border-primary/10 p-3 shadow-soft">
+                    <p className="text-xs font-semibold text-muted-foreground">类型</p>
+                    <p className="mt-2 text-sm font-bold text-foreground">{novel.genre ?? '暂未设置'}</p>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {(novel.tags ?? []).map((tag) => (
-                    <Badge key={tag} variant="secondary" className="rounded-full px-3 py-1 text-xs">
+                    <div key={tag} className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary">
                       {tag}
-                    </Badge>
+                    </div>
                   ))}
                   {(novel.tags ?? []).length === 0 && (
-                    <span className="text-xs text-muted-foreground">暂无标签</span>
+                    <span className="text-xs text-muted-foreground font-medium">暂无标签</span>
                   )}
                 </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Separator className="bg-border/40" />
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
                     <BookOpenCheck className="h-4 w-4 text-primary" />
-                    <span>点击进入写作工作台</span>
+                    <span>进入工作台</span>
                   </div>
-                  <Button onClick={() => onSelect(novel.id)} className="rounded-xl bg-primary px-5 text-primary-foreground hover:bg-primary/90">
-                    前往写作
+                  <Button onClick={() => onSelect(novel.id)} className="btn-primary rounded-xl px-6 text-primary-foreground font-bold">
+                    开始写作
                   </Button>
                 </div>
               </CardContent>
             </Card>
           ))}
           {filteredNovels.length === 0 && (
-            <div className="col-span-full rounded-3xl border-2 border-dashed border-border/60 bg-card/40 p-16 text-center">
-              <p className="text-base text-muted-foreground">
+            <div className="col-span-full rounded-3xl border-2 border-dashed border-primary/20 bg-primary/5 p-16 text-center">
+              <p className="text-base text-muted-foreground font-medium">
                 暂无匹配的作品，尝试调整筛选条件或点击「新建作品」开始创作。
               </p>
             </div>

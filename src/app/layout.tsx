@@ -20,9 +20,9 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Lenova Write Studio — 纯粹而优雅的小说创作空间",
+  title: "轻写 — 纯粹而优雅的小说创作空间",
   description:
-    "Lenova Write Studio 提供免费的在线小说创作体验，集成写作工作台、角色/世界观工作室与 AI 辅助，随时开启灵感之旅。",
+    "轻写提供免费的在线小说创作体验，集成写作工作台、角色/世界观工作室与 AI 辅助，随时开启灵感之旅。",
   keywords: [
     "小说创作",
     "写作工作台",
@@ -31,18 +31,28 @@ export const metadata: Metadata = {
     "角色设定",
     "世界观构建",
   ],
-  authors: [{ name: "Lenova Write Studio" }],
+  authors: [{ name: "轻写" }],
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
+      { url: '/logo-64.png', sizes: '64x64', type: 'image/png' },
+    ],
+    apple: '/icon-192.png',
+    shortcut: '/favicon.ico',
+  },
   openGraph: {
-    title: "Lenova Write Studio",
+    title: "轻写",
     description: "小而美的小说创作空间，永久免费且无需登录。",
-    url: "https://lenovawrite.studio",
-    siteName: "Lenova Write Studio",
+    url: "https://qingxie.app",
+    siteName: "轻写",
     type: "website",
+    images: ['/icon-512.png'],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Lenova Write Studio",
+    title: "轻写",
     description: "纯粹而优雅的小说创作体验，随时随地开始写作。",
+    images: ['/icon-512.png'],
   },
 };
 
