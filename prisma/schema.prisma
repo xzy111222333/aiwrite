@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Novel {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  genre       String?
+  status      String   @default("draft") // draft, writing, completed, published
+  coverImage  String?
+  tags        String?  // JSON字符串存储标签
+  wordCount   Int      @default(0)
+  chapterCount Int     @default(0)
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  worldBuilding WorldBuilding?
+  characters  Character[]
+  chapters    Chapter[]
+  outlines    Outline[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Chapter {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  summary     String?  // 章节概要
+  wordCount   Int
+  order       Int      // 章节顺序
+  status      String   @default("draft") // draft, completed, published
+  novelId     String
+  novel       Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Character {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  avatar      String?
+  personality String?  // 性格特点
+  background  String?  // 背景故事
+  relationships String? // 人物关系
+  novelId     String
+  novel       Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model WorldBuilding {
+  id          String   @id @default(cuid())
+  title       String
+  content     String   // 世界观设定
+  type        String   // setting, rules, history, culture, etc.
+  novelId     String   @unique
+  novel       Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Outline {
+  id          String   @id @default(cuid())
+  title       String
+  content     String   // 大纲内容
+  chapterRange String? // 涉及章节范围
+  order       Int      // 大纲顺序
+  novelId     String
+  novel       Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  novels    Novel[]
+}
