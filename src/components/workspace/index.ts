@@ -8,5 +8,6 @@ export * from './WorldStudio'
 export * from './ChapterNavigator'
 export * from './LibraryBoard'
 export * from './ResourceCenter'
+export * from './assist'
 
 

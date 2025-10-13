@@ -3,11 +3,12 @@ import { db } from '@/lib/db'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const novel = await db.novel.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         chapters: {
           orderBy: { order: 'asc' },
@@ -51,9 +52,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const body = await request.json()
     const { title, description, genre, status, coverImage, tags } = body
 
@@ -65,7 +67,7 @@ export async function PUT(
     }
 
     const novel = await db.novel.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title: title?.trim() || undefined,
         description: description?.trim() ?? undefined,
@@ -107,10 +109,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await db.novel.delete({ where: { id: params.id } })
+    const { id } = await params
+    await db.novel.delete({ where: { id } })
 
     return NextResponse.json({ success: true })
 

@@ -65,8 +65,8 @@ export function ResourceCenter({
               <Button variant="outline" size="sm" onClick={() => onOpenTool('character')} className="rounded-lg border-2">
                 <Sparkles className="mr-2 h-4 w-4" /> 角色设定
               </Button>
-              <Button variant="outline" size="sm" onClick={() => onOpenTool('world')} className="rounded-lg border-2">
-                <BookMarked className="mr-2 h-4 w-4" /> 世界观
+              <Button variant="outline" size="sm" onClick={() => onOpenTool('more')} className="rounded-lg border-2">
+                <BookMarked className="mr-2 h-4 w-4" /> 世界观工具
               </Button>
             </div>
           </div>

@@ -22,10 +22,16 @@ import {
   ChapterComposer,
   CharacterStudio,
   StoryOutlineStudio,
-  WorldStudio,
   ChapterNavigator,
   LibraryBoard,
   ResourceCenter,
+  AiWritingPanel,
+  AiRefinePanel,
+  AiContinuationPanel,
+  AiDeconstructPanel,
+  AiNamingPanel,
+  AiReviewPanel,
+  AiToolkitPanel,
 } from '@/components/workspace'
 import { Reorder } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
@@ -412,6 +418,24 @@ export default function AppPage() {
     void fetchNovelDetail(selectedNovelId)
   }, [fetchChapters, fetchNovelDetail, selectedNovelId])
 
+  const refreshNovelSnapshot = useCallback(() => {
+    if (!selectedNovelId) return
+    void fetchChapters(selectedNovelId)
+    void fetchNovelDetail(selectedNovelId)
+  }, [fetchChapters, fetchNovelDetail, selectedNovelId])
+
+  const handleAiChapterCreated = useCallback(
+    (chapterId: string) => {
+      setSelectedChapterId(chapterId)
+      refreshNovelSnapshot()
+    },
+    [refreshNovelSnapshot]
+  )
+
+  const handleAiChapterUpdated = useCallback(() => {
+    refreshNovelSnapshot()
+  }, [refreshNovelSnapshot])
+
   const handleDeleteNovel = useCallback(
     async (novelId: string) => {
       const confirmed = window.confirm('确定要删除该作品吗？此操作不可恢复。')
@@ -571,20 +595,32 @@ export default function AppPage() {
   )
 
   const assistantPanel = useMemo(() => {
-    if (!selectedNovelId) return null
     switch (assistantTool) {
-      case 'character':
+      case 'ai-write':
         return (
-          <CharacterStudio
+          <AiWritingPanel
             novelId={selectedNovelId}
-            onCreated={() => {
-              if (selectedNovelId) {
-                void fetchNovelDetail(selectedNovelId)
-              }
-            }}
+            chapterId={selectedChapterId}
+            onChapterCreated={handleAiChapterCreated}
+            onChapterUpdated={handleAiChapterUpdated}
+          />
+        )
+      case 'ai-expand':
+        return (
+          <AiRefinePanel
+            chapterId={selectedChapterId}
+            onChapterUpdated={handleAiChapterUpdated}
+          />
+        )
+      case 'ai-continue':
+        return (
+          <AiContinuationPanel
+            chapterId={selectedChapterId}
+            onChapterUpdated={handleAiChapterUpdated}
           />
         )
       case 'outline':
+        if (!selectedNovelId) return null
         return (
           <StoryOutlineStudio
             novelId={selectedNovelId}
@@ -597,7 +633,17 @@ export default function AppPage() {
         )
       case 'world':
         return (
-          <WorldStudio
+          <AiDeconstructPanel
+            novelId={selectedNovelId}
+            chapterId={selectedChapterId}
+            novelTitle={fullNovel?.title}
+            chapters={fullNovel?.chapters}
+          />
+        )
+      case 'character':
+        if (!selectedNovelId) return null
+        return (
+          <CharacterStudio
             novelId={selectedNovelId}
             onCreated={() => {
               if (selectedNovelId) {
@@ -606,10 +652,36 @@ export default function AppPage() {
             }}
           />
         )
+      case 'naming':
+        return <AiNamingPanel novelId={selectedNovelId} />
+      case 'review':
+        return <AiReviewPanel chapterId={selectedChapterId} />
+      case 'more':
+        return (
+          <AiToolkitPanel
+            novelId={selectedNovelId}
+            onSelectTool={(tool) => setAssistantTool(tool as AssistantTool)}
+            onNavigate={(view) => {
+              setNavView(view)
+              if (view !== 'workspace') {
+                setAssistantTool(null)
+              }
+            }}
+          />
+        )
       default:
         return null
     }
-  }, [assistantTool, fetchNovelDetail, selectedNovelId])
+  }, [
+    assistantTool,
+    fetchNovelDetail,
+    fullNovel?.chapters,
+    fullNovel?.title,
+    handleAiChapterCreated,
+    handleAiChapterUpdated,
+    selectedChapterId,
+    selectedNovelId,
+  ])
 
   const assistantOpen = Boolean(assistantPanel)
 
