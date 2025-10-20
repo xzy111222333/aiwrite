@@ -91,7 +91,7 @@ export default function HomePage() {
             <div className="flex items-center gap-6 lg:gap-8">
               <a href="#features" className="hidden md:inline-block text-muted-foreground hover:text-primary transition-colors text-sm font-medium">功能</a>
               <a href="#tools" className="hidden md:inline-block text-muted-foreground hover:text-primary transition-colors text-sm font-medium">工具</a>
-              <Link href="/app">
+              <Link href="/auth/signin">
                 <Button className="btn-primary text-primary-foreground text-sm px-6 lg:px-8 h-10 lg:h-11 rounded-xl font-semibold">
                   开始写作
                 </Button>
@@ -107,7 +107,7 @@ export default function HomePage() {
           <div className="text-center max-w-4xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8 shadow-soft">
               <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary">小而美的免费创作空间</span>
+              <span className="text-sm font-semibold text-primary">专为创作者打造的写作空间</span>
             </div>
 
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black mb-8 leading-[1.1] text-foreground tracking-tight">
@@ -118,19 +118,22 @@ export default function HomePage() {
             </h1>
 
             <p className="text-lg lg:text-xl text-muted-foreground mb-12 leading-relaxed max-w-2xl mx-auto">
-              无需登录，打开即写。简洁的界面设计、完整的创作工具与沉浸式体验，让你专注于故事的每一个字。
+              简洁的界面设计、完整的创作工具与沉浸式体验，让你专注于故事的每一个字。
+              数据安全存储，多设备同步。
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-              <Link href="/app">
+              <Link href="/auth/signup">
                 <Button size="lg" className="btn-primary text-primary-foreground text-base px-10 h-14 rounded-xl font-bold">
                   <PenTool className="w-5 h-5 mr-2" />
-                  立即开始创作
+                  免费注册体验
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="text-base px-10 h-14 rounded-xl font-semibold border-2 hover-glow">
-                了解更多
-              </Button>
+              <Link href="/auth/signin">
+                <Button size="lg" variant="outline" className="text-base px-10 h-14 rounded-xl font-semibold border-2 hover-glow">
+                  已有账户登录
+                </Button>
+              </Link>
             </div>
 
             {/* Preview cards */}
@@ -222,14 +225,21 @@ export default function HomePage() {
             准备好开始创作了吗？
           </h2>
           <p className="text-lg lg:text-xl text-white/90 mb-12 max-w-2xl mx-auto">
-            无需注册，永久免费，你的故事从这里开始
+            注册账户，安全存储你的作品，随时随地继续创作
           </p>
-          <Link href="/app">
-            <Button size="lg" className="bg-white text-primary hover:bg-white/95 text-base px-12 h-14 rounded-xl font-bold shadow-elevated hover:shadow-float transition-all">
-              <PenTool className="w-5 h-5 mr-2" />
-              免费开始写作
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/auth/signup">
+              <Button size="lg" className="bg-white text-primary hover:bg-white/95 text-base px-12 h-14 rounded-xl font-bold shadow-elevated hover:shadow-float transition-all">
+                <PenTool className="w-5 h-5 mr-2" />
+                免费注册体验
+              </Button>
+            </Link>
+            <Link href="/auth/signin">
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 text-base px-12 h-14 rounded-xl font-semibold">
+                已有账户登录
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -242,7 +252,7 @@ export default function HomePage() {
               <span className="text-base font-bold text-foreground">轻写</span>
             </div>
             <div className="text-sm text-muted-foreground">
-              © 2024 轻写. 为故事创作者打造。
+              © 2025 轻写. 为故事创作者打造。
             </div>
           </div>
         </div>

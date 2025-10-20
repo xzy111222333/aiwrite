@@ -244,27 +244,50 @@ export default function AppPage() {
     [chapters, selectedChapterId]
   )
 
-  const fetchNovels = useCallback(async () => {
-    try {
-      const response = await fetch('/api/novels')
-      const data = await response.json()
-      if (data.success) {
-        setNovels(data.novels)
-        if (!selectedNovelId && data.novels.length > 0) {
-          setSelectedNovelId(data.novels[0].id)
-        }
-      } else {
-        throw new Error(data.error || '获取作品失败')
+  // 在 app/app/page.tsx 中更新 fetchNovels 函数
+const fetchNovels = useCallback(async () => {
+  try {
+    console.log('开始获取小说列表...')
+    const response = await fetch('/api/novels')
+    
+    // 首先检查响应状态
+    if (!response.ok) {
+      // 如果是未授权，重定向到登录页
+      if (response.status === 401) {
+        console.log('未授权，需要重新登录')
+        window.location.href = '/auth/signin'
+        return
       }
-    } catch (error) {
-      console.error(error)
-      toast({
-        description: error instanceof Error ? error.message : '获取作品失败',
-        variant: 'destructive',
-      })
+      throw new Error(`HTTP error! status: ${response.status}`)
     }
-  }, [selectedNovelId])
-
+    
+    // 检查响应内容类型
+    const contentType = response.headers.get('content-type')
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text()
+      console.error('非 JSON 响应:', text)
+      throw new Error('服务器返回了非 JSON 响应')
+    }
+    
+    const data = await response.json()
+    console.log('获取小说列表成功:', data)
+    
+    if (data.success) {
+      setNovels(data.novels)
+      if (!selectedNovelId && data.novels.length > 0) {
+        setSelectedNovelId(data.novels[0].id)
+      }
+    } else {
+      throw new Error(data.error || '获取作品失败')
+    }
+  } catch (error) {
+    console.error('获取小说列表失败详情:', error)
+    toast({
+      description: error instanceof Error ? error.message : '获取作品失败',
+      variant: 'destructive',
+    })
+  }
+}, [selectedNovelId])
   const fetchNovelDetail = useCallback(async (novelId: string) => {
     try {
       const response = await fetch(`/api/novels/${novelId}`)
