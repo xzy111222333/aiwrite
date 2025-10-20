@@ -1,75 +1,80 @@
+// app/api/characters/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { requireAuth } from '@/lib/session'
 
 export async function GET(request: NextRequest) {
   try {
+    const user = await requireAuth()
+    
     const { searchParams } = new URL(request.url)
     const novelId = searchParams.get('novelId')
-    const keyword = searchParams.get('q')?.trim()
-    const take = Number(searchParams.get('take') || 50)
 
     const characters = await db.character.findMany({
       where: {
-        ...(novelId ? { novelId } : {}),
-        ...(keyword
-          ? {
-              OR: [
-                { name: { contains: keyword, mode: 'insensitive' } },
-                { description: { contains: keyword, mode: 'insensitive' } },
-              ],
-            }
-          : {}),
+        novel: {
+          userId: user.id,
+          ...(novelId ? { id: novelId } : {})
+        }
+      },
+      include: {
+        novel: {
+          select: {
+            title: true
+          }
+        }
       },
       orderBy: {
-        updatedAt: 'desc',
-      },
-      take: Math.max(1, Math.min(take, 200)),
+        createdAt: 'desc'
+      }
     })
 
     return NextResponse.json({
       success: true,
       characters,
     })
+
   } catch (error) {
     console.error('获取角色列表失败:', error)
     return NextResponse.json(
       {
         error: '获取角色列表失败',
-        details: error instanceof Error ? error.message : '未知错误',
+        details: error instanceof Error ? error.message : '未知错误'
       },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await requireAuth()
     const body = await request.json()
-    const { novelId, name, description, personality, background, relationships, avatar } = body
 
-    if (!novelId) {
-      return NextResponse.json(
-        { error: '缺少 novelId 参数' },
-        { status: 400 },
-      )
-    }
+    // 检查小说是否存在且属于当前用户
+    const novel = await db.novel.findFirst({
+      where: {
+        id: body.novelId,
+        userId: user.id
+      }
+    })
 
-    if (!name || name.trim().length === 0) {
+    if (!novel) {
       return NextResponse.json(
-        { error: '角色名称不能为空' },
-        { status: 400 },
+        { error: '小说不存在' },
+        { status: 404 }
       )
     }
 
     const character = await db.character.create({
       data: {
-        novelId,
-        name: name.trim(),
-        description: description?.trim() || '',
-        personality: personality?.trim() || null,
-        background: background?.trim() || null,
-        relationships: relationships?.trim() || null,
-        avatar: avatar || null,
+        name: body.name.trim(),
+        description: body.description,
+        avatar: body.avatar,
+        personality: body.personality,
+        background: body.background,
+        relationships: body.relationships,
+        novelId: body.novelId,
       },
     })
 
@@ -77,16 +82,15 @@ export async function POST(request: NextRequest) {
       success: true,
       character,
     })
+
   } catch (error) {
     console.error('创建角色失败:', error)
     return NextResponse.json(
       {
         error: '创建角色失败',
-        details: error instanceof Error ? error.message : '未知错误',
+        details: error instanceof Error ? error.message : '未知错误'
       },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
-
-

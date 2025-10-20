@@ -1,72 +1,92 @@
+// app/api/worlds/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { requireAuth } from '@/lib/session'
 
 export async function GET(request: NextRequest) {
   try {
+    const user = await requireAuth()
+    
     const { searchParams } = new URL(request.url)
     const novelId = searchParams.get('novelId')
-    const keyword = searchParams.get('q')?.trim()
-    const take = Number(searchParams.get('take') || 20)
 
     const worlds = await db.worldBuilding.findMany({
       where: {
-        ...(novelId ? { novelId } : {}),
-        ...(keyword
-          ? {
-              OR: [
-                { title: { contains: keyword, mode: 'insensitive' } },
-                { content: { contains: keyword, mode: 'insensitive' } },
-              ],
-            }
-          : {}),
+        novel: {
+          userId: user.id,
+          ...(novelId ? { id: novelId } : {})
+        }
+      },
+      include: {
+        novel: {
+          select: {
+            title: true,
+            id: true
+          }
+        }
       },
       orderBy: {
-        updatedAt: 'desc',
-      },
-      take: Math.max(1, Math.min(take, 100)),
+        createdAt: 'desc'
+      }
     })
 
     return NextResponse.json({
       success: true,
       worlds,
     })
+
   } catch (error) {
-    console.error('获取世界观失败:', error)
+    console.error('获取世界观列表失败:', error)
     return NextResponse.json(
       {
-        error: '获取世界观失败',
-        details: error instanceof Error ? error.message : '未知错误',
+        error: '获取世界观列表失败',
+        details: error instanceof Error ? error.message : '未知错误'
       },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await requireAuth()
     const body = await request.json()
-    const { novelId, title, content, type } = body
 
-    if (!novelId) {
+    // 检查小说是否存在且属于当前用户
+    const novel = await db.novel.findFirst({
+      where: {
+        id: body.novelId,
+        userId: user.id
+      }
+    })
+
+    if (!novel) {
       return NextResponse.json(
-        { error: '缺少 novelId 参数' },
-        { status: 400 },
+        { error: '小说不存在' },
+        { status: 404 }
       )
     }
 
-    if (!title || !content) {
+    // 检查是否已存在世界观设定
+    const existingWorld = await db.worldBuilding.findUnique({
+      where: {
+        novelId: body.novelId
+      }
+    })
+
+    if (existingWorld) {
       return NextResponse.json(
-        { error: '标题和内容不能为空' },
-        { status: 400 },
+        { error: '该小说已存在世界观设定' },
+        { status: 400 }
       )
     }
 
     const world = await db.worldBuilding.create({
       data: {
-        novelId,
-        title: title.trim(),
-        content,
-        type: type || 'setting',
+        title: body.title.trim(),
+        content: body.content,
+        type: body.type || 'setting',
+        novelId: body.novelId,
       },
     })
 
@@ -74,16 +94,15 @@ export async function POST(request: NextRequest) {
       success: true,
       world,
     })
+
   } catch (error) {
     console.error('创建世界观失败:', error)
     return NextResponse.json(
       {
         error: '创建世界观失败',
-        details: error instanceof Error ? error.message : '未知错误',
+        details: error instanceof Error ? error.message : '未知错误'
       },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
-
-

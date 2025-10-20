@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// prisma/schema.prisma
+// 删除所有内容，只保留这个版本
 
 generator client {
   provider = "prisma-client-js"
@@ -13,18 +10,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// prisma/schema.prisma
 model Novel {
   id          String   @id @default(cuid())
   title       String
   description String?
   genre       String?
-  status      String   @default("draft") // draft, writing, completed, published
+  status      String   @default("draft")
   coverImage  String?
-  tags        String?  // JSON字符串存储标签
+  tags        String?
   wordCount   Int      @default(0)
   chapterCount Int     @default(0)
-  userId      String?
-  user        User?    @relation(fields: [userId], references: [id])
+  userId      String?  // 改为可选字段
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   worldBuilding WorldBuilding?
   characters  Character[]
   chapters    Chapter[]
@@ -33,14 +31,16 @@ model Novel {
   updatedAt   DateTime @updatedAt
 }
 
+// 其他模型保持不变...
+
 model Chapter {
   id          String   @id @default(cuid())
   title       String
   content     String
-  summary     String?  // 章节概要
+  summary     String?
   wordCount   Int
-  order       Int      // 章节顺序
-  status      String   @default("draft") // draft, completed, published
+  order       Int
+  status      String   @default("draft")
   novelId     String
   novel       Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
@@ -52,9 +52,9 @@ model Character {
   name        String
   description String
   avatar      String?
-  personality String?  // 性格特点
-  background  String?  // 背景故事
-  relationships String? // 人物关系
+  personality String?
+  background  String?
+  relationships String?
   novelId     String
   novel       Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
@@ -64,8 +64,8 @@ model Character {
 model WorldBuilding {
   id          String   @id @default(cuid())
   title       String
-  content     String   // 世界观设定
-  type        String   // setting, rules, history, culture, etc.
+  content     String
+  type        String
   novelId     String   @unique
   novel       Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
@@ -75,9 +75,9 @@ model WorldBuilding {
 model Outline {
   id          String   @id @default(cuid())
   title       String
-  content     String   // 大纲内容
-  chapterRange String? // 涉及章节范围
-  order       Int      // 大纲顺序
+  content     String
+  chapterRange String?
+  order       Int
   novelId     String
   novel       Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
@@ -85,11 +85,50 @@ model Outline {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  avatar    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  novels    Novel[]
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  avatar        String?
+  password      String?
+  emailVerified DateTime?
+  accounts      Account[]
+  sessions      Session[]
+  novels        Novel[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
