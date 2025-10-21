@@ -4,6 +4,11 @@
 
 > **轻写** - 纯粹而优雅的小说创作空间，专注于写作本身。
 
+
+https://github.com/user-attachments/assets/a561f4ea-ab69-4278-b7cc-5f17e53d7117
+
+
+
 ### 1. 配置豆包API
 
 在项目根目录创建 `.env` 文件：
