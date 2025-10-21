@@ -10,7 +10,7 @@
 
 ```bash
 # 豆包大模型配置
-DOUBAO_API_KEY=6492f66b-0609-43c5-ad6f-a26dc3c1a375
+DOUBAO_API_KEY=your_doubao_apikey
 DOUBAO_API_URL=https://ark.cn-beijing.volces.com/api/v3/chat/completions
 DOUBAO_MODEL=doubao-seed-1-6-flash-250828
 
